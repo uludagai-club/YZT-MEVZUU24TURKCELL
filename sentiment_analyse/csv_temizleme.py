@@ -1,6 +1,7 @@
 import csv
 import chardet
 
+
 with open("reviews.csv", 'rb') as dosya:
     kodlama = chardet.detect(dosya.read())['encoding']
 
