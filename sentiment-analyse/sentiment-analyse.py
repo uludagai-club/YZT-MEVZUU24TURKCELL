@@ -162,16 +162,13 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 200)
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
-# Veri yükleme
 df = pd.read_csv('cleaned_reviews.csv')
 df['Görüş'] = df['Görüş'].str.lower()
 df['Görüş'] = df['Görüş'].str.replace(r'\b\w{1,2}\b', '')
 df['Görüş'] = df['Görüş'].str.replace('\d', '')
 
-# Türkçe stopwords'leri yükleme
 sw = nltk.corpus.stopwords.words('turkish')
 
-# Veri ön işleme
 df['Görüş'] = df['Görüş'].apply(lambda x: " ".join(x for x in str(x).split() if x not in sw))
 sil = pd.Series(' '.join(df['Görüş']).split()).value_counts()[-1000:]
 df['Görüş'] = df['Görüş'].apply(lambda x: " ".join(x for x in x.split() if x not in sil))
@@ -188,5 +185,4 @@ def label_sentiment(x):
         return "neg"
 df['Sentiment_Label'] = df['Görüş'].apply(label_sentiment)
 
-# Veriyi CSV'ye kaydetme
 df.to_csv('labeled_reviews.csv', index=False)
