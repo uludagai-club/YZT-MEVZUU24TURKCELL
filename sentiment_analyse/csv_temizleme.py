@@ -1,4 +1,3 @@
-<<<<<<< HEAD:sentiment-analyse/csv_temizleme.py
 import csv
 import chardet
 
@@ -44,4 +43,3 @@ with open(dosya_adi, "r", newline="", encoding=kodlama) as dosya_in, \
         csv_yazici.writerow([yeni_satir])
 
 print("CSV dosyası temizlendi ve kaydedildi.")
->>>>>>> 9756a758ee8dff9602713a7c856e422d3d134eeb:sentiment_analyse/csv_temizleme.py
