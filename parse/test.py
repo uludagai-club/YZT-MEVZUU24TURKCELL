@@ -4,7 +4,9 @@ import time
 
 def get_complaint_links(html_text):
     soup = BeautifulSoup(html_text, 'html.parser')
-    complaint_links = soup.find_all('a', class_='complaint-description')
+    with open("test.html","w",encoding="utf-8") as f:
+        f.write(html_text)
+    complaint_links = soup.find_all('a', class_='complaint-layer')
     return [link['href'] for link in complaint_links]
 
 def main():
@@ -44,7 +46,7 @@ def main():
     for link in all_complaint_links:
         print(link)
         
-        time.sleep(10)  
+        time.sleep(10) 
 
 if __name__ == "__main__":
     main()
