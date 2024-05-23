@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import cloudscraper
 import time
+import random
 
 def get_complaint_links(html_text):
     soup = BeautifulSoup(html_text, 'html.parser')
@@ -31,12 +32,9 @@ def main():
         
         print(f"Page {current_page} processed.")
         current_page += 1
-        time.sleep(10)
-    
-    print("All complaint links:")
-    for link in all_complaint_links:
-        print(link)
-        time.sleep(10)
+        time.sleep(random.randint(15,20))
+        
+    open("test.txt","w").write("\n".join(all_complaint_links))
 
 if __name__ == "__main__":
     main()
