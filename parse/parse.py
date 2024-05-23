@@ -25,7 +25,7 @@ def get_complaint_detail_description(url):
 results = []
 
 all_complaint_links=[]
-with open('test.txt', 'r') as f:
+with open('test.txt', 'r', encoding="utf-8") as f:
     all_complaint_links = f.readlines()
 
 for url in all_complaint_links:
