@@ -34,7 +34,7 @@ def main():
         current_page += 1
         time.sleep(random.randint(15,20))
         
-    open("test.txt","w").write("\n".join(all_complaint_links))
+    open("complaint_links.txt","w").write("\n".join(all_complaint_links))
 
 if __name__ == "__main__":
     main()
