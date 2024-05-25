@@ -26,13 +26,12 @@ def get_complaint_detail_description(url):
 results = []
 
 all_complaint_links=[]
-with open('complaint_vodafone_links.txt', 'r', encoding="utf-8") as f:
+with open('complaint_links_vodafone.txt', 'r', encoding="utf-8") as f:
     all_complaint_links = f.readlines()
     
-all_complaint_links = list(set(all_complaint_links))
+counter=1
 
-
-for url in all_complaint_links[3026:]:
+for url in all_complaint_links[436:]:
     print(f'Fetching data from {url}')
     result = get_complaint_detail_description(url)
     results.append({'url': url, 'complaint': result})
@@ -42,5 +41,7 @@ for url in all_complaint_links[3026:]:
             writer = csv.DictWriter(file, fieldnames=['url', 'complaint'])
             writer.writerows(results)
         results=[]
+        print(counter*100)
+        counter+=1
 
 print("Data has been written to complaints.csv")

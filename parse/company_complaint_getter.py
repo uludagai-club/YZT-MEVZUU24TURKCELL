@@ -41,4 +41,4 @@ def main(company_name="",max_pages = 350):
     open(f"complaint_links_{company_name}.txt","w").write("\n".join(list(set(all_complaint_links))))
 
 if __name__ == "__main__":
-    main(company_name="vodafone",max_pages=400)
+    main(company_name="vodafone",max_pages=350)
