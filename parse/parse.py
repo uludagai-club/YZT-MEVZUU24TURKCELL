@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import time
 import requests
 import csv
+import random
 
 def get_complaint_detail_description(url):
     try:
@@ -28,11 +29,11 @@ all_complaint_links=[]
 with open('complaint_links.txt', 'r', encoding="utf-8") as f:
     all_complaint_links = f.readlines()
 
-for url in all_complaint_links:
+for url in all_complaint_links[4529:]:
     print(f'Fetching data from {url}')
     result = get_complaint_detail_description(url)
     results.append({'url': url, 'complaint': result})
-    time.sleep(20)  
+    time.sleep(random.randint(4,8))
 
 with open('complaints.csv', mode='w', newline='', encoding='utf-8') as file:
     writer = csv.DictWriter(file, fieldnames=['url', 'complaint'])
