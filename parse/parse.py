@@ -24,14 +24,14 @@ def get_complaint_detail_description(url:str):
         return f'Error fetching the URL: {e}'
 
 def load_links(company_name:str)->list[str]:
-    with open(f'complaint_links_{company_name}.txt', 'r', encoding="utf-8") as f:
+    with open(f'docs/complaint_links_{company_name}.txt', 'r', encoding="utf-8") as f:
         complaint_links = f.readlines()
     
     return list(set(complaint_links))
 
 def write_to_csv(results:list[dict[str, str]],company_name:str):
-    if len(results)>100:
-        with open(f'complaints_{company_name}.csv', mode='a+', newline='', encoding='utf-8') as file:
+    if len(results)>25:
+        with open(f'docs/complaints_{company_name}.csv', mode='a+', newline='', encoding='utf-8') as file:
             writer = csv.DictWriter(file, fieldnames=['url', 'complaint'])
             writer.writerows(results)
         results.clear()

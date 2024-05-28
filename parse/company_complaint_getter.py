@@ -39,7 +39,7 @@ def main(company_name=""):
         time.sleep(random.randint(4,8))
         
         if len(all_complaint_links)>20:
-            open(f"complaint_links_{company_name}.txt","a+").write("\n"+"\n".join(list(set(all_complaint_links))))
+            open(f"docs/complaint_links_{company_name}.txt","a+").write("\n"+"\n".join(list(set(all_complaint_links))))
             all_complaint_links.clear()
 
 if __name__ == "__main__":
