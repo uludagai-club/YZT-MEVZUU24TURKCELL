@@ -12,9 +12,9 @@ def get_complaint_links(html_text,company_name):
             links.append(link["href"])
     return links
 
-def main(company_name=""):
+def main(company_name="",max_pages = 350):
     current_page = 2
-    max_pages = 350
+    
     all_complaint_links = []
     
     while current_page <= max_pages:
