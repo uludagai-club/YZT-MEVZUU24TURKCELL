@@ -38,7 +38,9 @@ def main(company_name=""):
         current_page += 1
         time.sleep(random.randint(4,8))
         
-    open(f"complaint_links_{company_name}.txt","w").write("\n".join(list(set(all_complaint_links))))
+        if len(all_complaint_links)>20:
+            open(f"complaint_links_{company_name}.txt","a+").write("\n"+"\n".join(list(set(all_complaint_links))))
+            all_complaint_links.clear()
 
 if __name__ == "__main__":
-    main(company_name="vodafone")
+    main(company_name="turkcell")
