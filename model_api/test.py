@@ -11,3 +11,13 @@ class TestNerSentiment(unittest.TestCase):
         
 if __name__ == '__main__':
     unittest.main()
+"""import requests
+
+url = "http://127.0.0.1:8000/predict/"
+data = {
+    "text": "Fiber 100mb SuperOnline kullanıcısıyım yaklaşık 2 haftadır @Twitch @Kick_Turkey gibi canlı yayın platformlarında 360p yayın izlerken donmalar yaşıyoruz."
+}
+
+response = requests.post(url, json=data)
+print(response.json())
+"""

@@ -1,24 +1,29 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from transformers import pipeline, AutoTokenizer, AutoModelForTokenClassification
+from transformers import pipeline
 import nltk
+from ner import load_ner_model
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-ner_model_name = "savasy/bert-base-turkish-ner-cased"
-sentiment_model_name = "savasy/bert-base-turkish-sentiment-cased"
-
-tokenizer = AutoTokenizer.from_pretrained(ner_model_name)
-ner_model = AutoModelForTokenClassification.from_pretrained(ner_model_name)
-ner_pipeline = pipeline("ner", model=ner_model, tokenizer=tokenizer, grouped_entities=True)
-sentiment_pipeline = pipeline("sentiment-analysis", model=sentiment_model_name)
-
 nltk.download('punkt')
+
+ner_pipeline = load_ner_model("savasy/bert-base-turkish-ner-cased")
+sentiment_pipeline = pipeline("sentiment-analysis", model="savasy/bert-base-turkish-sentiment-cased")
 
 class TextInput(BaseModel):
     text: str
 
-@app.post("/process/")
+@app.get("/predict/health")
+async def health_check():
+    return JSONResponse(content={"status": "OK"}, status_code=200)
+
+@app.post("/predict/setup")
+async def setup():
+    return JSONResponse(content={"status": "Setup completed"}, status_code=200)
+
+@app.post("/predict/")
 async def process_text(input: TextInput):
     text = input.text
 
