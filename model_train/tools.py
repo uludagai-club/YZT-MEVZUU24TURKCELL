@@ -30,6 +30,18 @@ def generate_output(df, model, tokenizer):
         })
     return output
 
+def generate_output_textbase(text, entities, model, tokenizer):
+    output = []
+
+    predictions = predict_sentiment(text, model, tokenizer)
+    entity_sentiment = [{"entity": entity, "sentiment": "olumlu" if pred == 1 else "olumsuz" if pred == 2 else "nötr"} for entity, pred in zip(entities, predictions)]
+    output.append({
+        "entity_list": entities,
+        "results": entity_sentiment
+    })
+    return output
+
+
 def calculate_score(predicted_output, ground_truth):
     correct_entity_count = sum([1 for po, gt in zip(predicted_output["results"], ground_truth["results"]) if po["entity"] == gt["entity"]])
     correct_sentiment_count = sum([1 for po, gt in zip(predicted_output["results"], ground_truth["results"]) if po["sentiment"] == gt["sentiment"]])
