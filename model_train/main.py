@@ -1,18 +1,21 @@
-from transformers import BertTokenizer
-from data_processing import load_data, process_data, prepare_datasets
-from model_training import train_model
-from aspects_extracting import extract_aspects_and_sentiments
+import json
+import pandas as pd
+from tools import prepare_data, generate_output, calculate_score, predict_sentiment
+from model import train_model, evaluate_model
 
-file_path = 'turkcell_.json'
-data = load_data(file_path)
+with open('output_data.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
 
-tokenizer = BertTokenizer.from_pretrained("dbmdz/bert-base-turkish-uncased")
-input_ids, attention_masks, label_ids, label_list = process_data(data, tokenizer)
+df = pd.DataFrame(data)
 
-train_dataset, val_dataset = prepare_datasets(input_ids, attention_masks, label_ids)
+model, tokenizer = train_model(df)
+eval_results = evaluate_model(model, tokenizer, df)
+# print(f"Değerlendirme Sonuçları: {eval_results}")
 
-model = train_model(train_dataset, val_dataset, tokenizer, label_list)
+output = generate_output(df, model, tokenizer)
+# print(json.dumps(output, indent=4, ensure_ascii=False))
 
-text = "Turkcell Superbox hizmeti berbat."
-aspects = extract_aspects_and_sentiments(text, model, tokenizer, label_list)
-print(aspects)
+ground_truth = df.to_dict("records")
+overall_scores = [calculate_score(po, gt) for po, gt in zip(output, ground_truth)]
+average_score = sum(overall_scores) / len(overall_scores)
+# print(f"Ortalama Skor: {average_score}")
