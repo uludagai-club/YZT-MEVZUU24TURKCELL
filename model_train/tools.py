@@ -1,5 +1,5 @@
 import torch
-
+from model import SentimentDataset
 
 def prepare_data(df, tokenizer, max_length=128):
     texts = df["text"].tolist()
@@ -30,17 +30,54 @@ def generate_output(df, model, tokenizer):
         })
     return output
 
-def generate_output_textbase(text, entities, model, tokenizer):
-    output = []
+def extract_entities(text, tokenizer, model):
+    inputs = tokenizer(text, return_tensors="pt")
+    with torch.no_grad():
+        outputs = model(**inputs)
+    
+    logits = outputs.logits
+    predictions = torch.argmax(logits, dim=2)
+    
+    tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+    entities = []
+    current_entity = []
 
+    for token, prediction in zip(tokens, predictions[0]):
+        label = model.config.id2label[prediction.item()]
+        if label.startswith("B-"):
+            if current_entity:
+                entities.append(" ".join(current_entity))
+                current_entity = []
+            current_entity.append(token)
+        elif label.startswith("I-") and current_entity:
+            current_entity.append(token)
+        else:
+            if current_entity:
+                entities.append(" ".join(current_entity))
+                current_entity = []
+    
+    if current_entity:
+        entities.append(" ".join(current_entity))
+    
+    entities = [entity.replace("##", "") for entity in entities]  
+    
+    return entities
+
+def generate_output_textbase(text, model, tokenizer):
+    output = []
+    
+    entities = extract_entities(text, tokenizer, model)
+    
     predictions = predict_sentiment(text, model, tokenizer)
+    
     entity_sentiment = [{"entity": entity, "sentiment": "olumlu" if pred == 1 else "olumsuz" if pred == 2 else "nötr"} for entity, pred in zip(entities, predictions)]
+    
     output.append({
         "entity_list": entities,
         "results": entity_sentiment
     })
+    
     return output
-
 
 def calculate_score(predicted_output, ground_truth):
     correct_entity_count = sum([1 for po, gt in zip(predicted_output["results"], ground_truth["results"]) if po["entity"] == gt["entity"]])
