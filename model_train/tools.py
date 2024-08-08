@@ -1,11 +1,10 @@
 import torch
-from model import SentimentDataset
 
 def prepare_data(df, tokenizer, max_length=128):
     texts = df["text"].tolist()
     labels = [[1 if s == "olumlu" else 0 if s == "nötr" else 2 for s in sentiment] for sentiment in df["sentiments"]]
     max_label_length = max(len(label) for label in labels)
-    padded_labels = [label + [0] * (max_label_length - len(label)) for label in labels]  # Pad with a neutral label or other value if appropriate
+    padded_labels = [label + [0] * (max_label_length - len(label)) for label in labels]
     
     inputs = tokenizer(texts, max_length=max_length, padding=True, truncation=True, return_tensors="pt")
     labels = torch.tensor(padded_labels)
@@ -14,7 +13,10 @@ def prepare_data(df, tokenizer, max_length=128):
 def predict_sentiment(text, model, tokenizer):
     inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
     outputs = model(**inputs)
+    
+    # Modelin 2D çıktısını ele almak için argmax işlemini dim=1 üzerinde yapıyoruz
     predictions = torch.argmax(outputs.logits, dim=1).tolist()
+    
     return predictions
 
 def generate_output(df, model, tokenizer):
@@ -36,14 +38,14 @@ def extract_entities(text, tokenizer, model):
         outputs = model(**inputs)
     
     logits = outputs.logits
-    predictions = torch.argmax(logits, dim=2)
-    
+    predictions = torch.argmax(logits, dim=1).tolist()  # 2D çıktıyı ele alıyoruz
+
     tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
     entities = []
     current_entity = []
 
-    for token, prediction in zip(tokens, predictions[0]):
-        label = model.config.id2label[prediction.item()]
+    for token, prediction in zip(tokens, predictions):
+        label = model.config.id2label[prediction]
         if label.startswith("B-"):
             if current_entity:
                 entities.append(" ".join(current_entity))
@@ -59,7 +61,7 @@ def extract_entities(text, tokenizer, model):
     if current_entity:
         entities.append(" ".join(current_entity))
     
-    entities = [entity.replace("##", "") for entity in entities]  
+    entities = [entity.replace("##", "") for entity in entities]
     
     return entities
 
